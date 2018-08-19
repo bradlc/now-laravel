@@ -47,6 +47,7 @@ RUN apk add --no-cache \
     nginx \
     php7 \
     php7-fpm \
+    php7-dev \
     php7-common \
     php7-openssl \
     php7-pdo \
@@ -59,6 +60,19 @@ RUN apk add --no-cache \
     php7-ctype \
     php7-json \
     php7-session
+
+RUN apk add --no-cache --virtual .v8-deps $PHPIZE_DEPS autoconf curl git make gcc g++ && \
+    mkdir -p /usr/local/v8 && \
+    curl -fSL --connect-timeout 30 https://www.dropbox.com/s/f1xd788tjccfnc6/alpine-libv8-5.7.455.tar.gz | tar xz -C /usr/local/v8 && \
+    git clone -b php7 --depth 1 https://github.com/preillyme/v8js.git /tmp/v8js && \
+    cd /tmp/v8js && \
+    phpize && \
+    ./configure --with-v8js=/usr/local/v8 && \
+    make && \
+    make install && \
+    echo "extension=v8js.so" > /etc/php7/conf.d/v8js.ini && \
+    rm -r /tmp/v8js && \
+    apk del .v8-deps
 
 WORKDIR /www
 COPY conf/nginx.conf /etc/nginx/
