@@ -17,5 +17,11 @@ cp .env.example .env && php artisan key:generate
 ```
 
 ```
-now --dotenv
+npm run deploy
+```
+
+To use an env file other than `.env`:
+
+```
+DOT_ENV=.env.production npm run deploy
 ```

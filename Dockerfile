@@ -70,4 +70,7 @@ COPY --from=frontend /app/public/css/ ./public/css/
 COPY --from=frontend /app/mix-manifest.json ./mix-manifest.json
 RUN chown -R www-data:www-data ./
 
+ARG LARAVEL_ENV
+RUN echo -e "$LARAVEL_ENV" > .env
+
 CMD ["/bin/bash", "-c", "php-fpm7 -F & (wait-for /tmp/php7-fpm.sock && nginx) & wait -n"]
